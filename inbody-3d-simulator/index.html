@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura3D - Advanced InBody Test 3D Simulator & Health Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js and OrbitControls CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar - Inputs and Upload -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-cube aura-glow"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Aura<span>3D</span></h1>
+                    <p>InBody Simulation Suite</p>
+                </div>
+            </div>
+
+            <!-- OCR Upload Area -->
+            <div class="upload-section glass-panel">
+                <h3><i class="fa-solid fa-file-invoice"></i> Upload InBody Sheet</h3>
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-content">
+                        <i class="fa-solid fa-cloud-arrow-up cloud-icon"></i>
+                        <p class="drop-text">Drag & drop InBody report image or <span>browse</span></p>
+                        <p class="file-limits">Supports JPG, PNG, WEBP</p>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    
+                    <!-- Scan Scanner Overlay -->
+                    <div class="scanner-overlay" id="scannerOverlay">
+                        <div class="scanner-line"></div>
+                        <div class="scan-status-container">
+                            <span class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                            <span id="scanStatus">Analyzing metrics...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Parameters Form -->
+            <div class="form-section glass-panel">
+                <h3><i class="fa-solid fa-sliders"></i> Body Metrics</h3>
+                <form id="metricsForm">
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="userName">Name</label>
+                            <input type="text" id="userName" value="Alex Mercer" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userGender">Gender</label>
+                            <select id="userGender">
+                                <option value="male" selected>Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="userAge">Age (Years)</label>
+                            <input type="number" id="userAge" value="28" min="15" max="80">
+                        </div>
+                        <div class="form-group">
+                            <label for="userGoal">Goal</label>
+                            <select id="userGoal">
+                                <option value="cut">Fat Loss (Cut)</option>
+                                <option value="recomp" selected>Body Recomp</option>
+                                <option value="bulk">Build Muscle (Bulk)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="height">Height (cm)</label>
+                            <span class="range-val" id="heightVal">180 cm</span>
+                        </div>
+                        <input type="range" id="height" min="140" max="210" value="180">
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="weight">Weight (kg)</label>
+                            <span class="range-val" id="weightVal">85.0 kg</span>
+                        </div>
+                        <input type="range" id="weight" min="40" max="150" value="85" step="0.5">
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="bodyFat">Body Fat Percentage (%)</label>
+                            <span class="range-val" id="bodyFatVal" style="color: var(--color-fat);">22.0%</span>
+                        </div>
+                        <input type="range" id="bodyFat" min="5" max="50" value="22" step="0.1">
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="muscleMass">Skeletal Muscle Mass (kg)</label>
+                            <span class="range-val" id="muscleMassVal" style="color: var(--color-muscle);">38.0 kg</span>
+                        </div>
+                        <input type="range" id="muscleMass" min="15" max="70" value="38" step="0.1">
+                    </div>
+
+                    <div class="range-group">
+                        <div class="range-header">
+                            <label for="activityLevel">Activity Level</label>
+                        </div>
+                        <select id="activityLevel">
+                            <option value="sedentary">Sedentary (Desk Job)</option>
+                            <option value="light">Lightly Active (1-3 days/wk)</option>
+                            <option value="moderate" selected>Moderately Active (3-5 days/wk)</option>
+                            <option value="active">Very Active (6-7 days/wk)</option>
+                        </select>
+                    </div>
+
+                    <!-- Calculated stats preview -->
+                    <div class="quick-stats">
+                        <div class="q-stat">
+                            <span>BMI</span>
+                            <strong id="bmiVal">26.2</strong>
+                        </div>
+                        <div class="q-stat">
+                            <span>Fat-Free Mass</span>
+                            <strong id="ffmVal">66.3 kg</strong>
+                        </div>
+                        <div class="q-stat">
+                            <span>BMR (Kcal)</span>
+                            <strong id="bmrVal">1850</strong>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Display Panel -->
+        <main class="main-panel">
+            <!-- Top Navigation Bar -->
+            <nav class="top-nav glass-panel">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="simulation-tab">
+                        <i class="fa-solid fa-male"></i> 3D Simulation
+                    </button>
+                    <button class="nav-tab" data-tab="nutrition-tab">
+                        <i class="fa-solid fa-utensils"></i> Personalized Meal Plan
+                    </button>
+                    <button class="nav-tab" data-tab="workout-tab">
+                        <i class="fa-solid fa-dumbbell"></i> Optimal Workout Split
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Tab Content Container -->
+            <div class="tab-content-wrapper">
+                
+                <!-- Tab 1: 3D Simulation -->
+                <div class="tab-content active" id="simulation-tab">
+                    <div class="simulation-layout">
+                        <!-- Viewport Controls Overlay -->
+                        <div class="viewport-controls glass-panel">
+                            <div class="control-section">
+                                <h4>Visualization Mode</h4>
+                                <div class="btn-group">
+                                    <button class="view-btn active" id="modeRealistic">Realistic</button>
+                                    <button class="view-btn" id="modeMuscle">Muscle Map</button>
+                                    <button class="view-btn" id="modeFat">Fat Distribution</button>
+                                    <button class="view-btn" id="modeWireframe">Grid Network</button>
+                                </div>
+                            </div>
+                            <div class="control-section">
+                                <h4>Show Overlays</h4>
+                                <div class="toggle-group">
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggleMeasurements" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>Virtual Tape Measure</span>
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggleSkeleton">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>Anatomical Skeleton</span>
+                                </div>
+                            </div>
+                            <div class="control-section">
+                                <button class="reset-camera-btn" id="resetCamera">
+                                    <i class="fa-solid fa-arrows-spin"></i> Reset View
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 3D Canvas Viewport -->
+                        <div class="canvas-container" id="canvasContainer">
+                            <!-- Overlay indicators -->
+                            <div class="tape-measure-readout" id="tapeReadout">
+                                <div class="readout-card">
+                                    <span class="label">Chest Girth</span>
+                                    <span class="val" id="chestGirthVal">-- cm</span>
+                                </div>
+                                <div class="readout-card">
+                                    <span class="label">Waist Girth</span>
+                                    <span class="val" id="waistGirthVal">-- cm</span>
+                                </div>
+                                <div class="readout-card">
+                                    <span class="label">Hip Girth</span>
+                                    <span class="val" id="hipGirthVal">-- cm</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Help tooltip -->
+                            <div class="viewport-help">
+                                <i class="fa-solid fa-computer-mouse"></i> Drag to rotate | Scroll to zoom
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Nutrition Plan -->
+                <div class="tab-content" id="nutrition-tab">
+                    <div class="nutrition-dashboard">
+                        <!-- TDEE summary row -->
+                        <div class="nutrition-summary glass-panel">
+                            <div class="summary-card calorie-target">
+                                <div class="card-icon"><i class="fa-solid fa-fire"></i></div>
+                                <div>
+                                    <span>Daily Caloric Target</span>
+                                    <h2 id="targetCalories">2,450 Kcal</h2>
+                                    <p id="goalDescription">Moderate deficit to facilitate steady body recomposition.</p>
+                                </div>
+                            </div>
+                            <div class="summary-card macros-summary">
+                                <div class="macro-donut-wrapper">
+                                    <!-- Dynamic SVG Donut Chart -->
+                                    <svg viewBox="0 0 36 36" class="circular-chart">
+                                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                        <path class="circle circle-protein" id="svgProtein" stroke-dasharray="35, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                        <path class="circle circle-carbs" id="svgCarbs" stroke-dasharray="40, 100" stroke-dashoffset="-35" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                        <path class="circle circle-fats" id="svgFats" stroke-dasharray="25, 100" stroke-dashoffset="-75" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                    </svg>
+                                    <div class="donut-text">
+                                        <span id="targetCaloriesSmall">2450</span>
+                                        <span class="unit">Kcal</span>
+                                    </div>
+                                </div>
+                                <div class="macro-legends">
+                                    <div class="legend-item text-protein">
+                                        <span class="dot p-dot"></span>
+                                        <span>Protein: <strong id="proteinGram">214g</strong> (<span id="proteinPct">35</span>%)</span>
+                                    </div>
+                                    <div class="legend-item text-carbs">
+                                        <span class="dot c-dot"></span>
+                                        <span>Carbohydrates: <strong id="carbsGram">245g</strong> (<span id="carbsPct">40</span>%)</span>
+                                    </div>
+                                    <div class="legend-item text-fats">
+                                        <span class="dot f-dot"></span>
+                                        <span>Fats: <strong id="fatsGram">68g</strong> (<span id="fatsPct">25</span>%)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Diet Meal Plan Details -->
+                        <div class="meal-plan-section">
+                            <h3 class="section-title"><i class="fa-solid fa-calendar-day"></i> Custom Daily Nutrition Menu</h3>
+                            <div class="meals-grid" id="mealsGrid">
+                                <!-- Loaded dynamically via planner.js -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Workout Plan -->
+                <div class="tab-content" id="workout-tab">
+                    <div class="workout-dashboard">
+                        <!-- Left pane: Split & Strength -->
+                        <div class="workout-left-pane">
+                            <div class="split-header glass-panel">
+                                <div class="split-info">
+                                    <span>Skeletal Muscle Mass Target Split</span>
+                                    <h2 id="splitName">Push / Pull / Legs (PPL)</h2>
+                                    <p id="splitDescription">Optimized for moderate muscle building and recovery relative to your SMM metrics.</p>
+                                </div>
+                                <div class="training-frequency-tag">
+                                    <span class="tag-title">Weekly Sessions</span>
+                                    <strong id="weeklyDays">4-5 Days</strong>
+                                </div>
+                            </div>
+
+                            <div class="workout-split-days" id="workoutSplitContainer">
+                                <!-- Loaded dynamically via planner.js -->
+                            </div>
+                        </div>
+
+                        <!-- Right pane: Cardio & Heart Rate Zone -->
+                        <div class="workout-right-pane">
+                            <div class="cardio-recommendations glass-panel">
+                                <h3><i class="fa-solid fa-heart-pulse"></i> Optimal Cardio Strategy</h3>
+                                <div class="cardio-metric-row">
+                                    <div class="cardio-card">
+                                        <span>Type</span>
+                                        <strong id="cardioType">HIIT + LISS Mixed</strong>
+                                    </div>
+                                    <div class="cardio-card">
+                                        <span>Frequency</span>
+                                        <strong id="cardioFreq">3x per week</strong>
+                                    </div>
+                                    <div class="cardio-card">
+                                        <span>Duration</span>
+                                        <strong id="cardioDuration">25-35 mins</strong>
+                                    </div>
+                                </div>
+                                <p id="cardioReason" class="cardio-explanation">Based on your Body Fat % of 22%, cardio is targeted to promote lipid oxidation while preserving skeletal muscle mass.</p>
+                            </div>
+
+                            <div class="hr-zones-section glass-panel">
+                                <h3><i class="fa-solid fa-gauge-high"></i> Cardio Heart Rate Intensity Zones</h3>
+                                <div class="zones-container">
+                                    <div class="zone-bar low-zone">
+                                        <div class="zone-info">
+                                            <span>Zone 1: Active Recovery (Warmup)</span>
+                                            <strong id="hz1">115 - 130 bpm</strong>
+                                        </div>
+                                    </div>
+                                    <div class="zone-bar mid-zone active-zone">
+                                        <div class="zone-info">
+                                            <span>Zone 2: Fat Burning Zone (Target)</span>
+                                            <strong id="hz2">130 - 150 bpm</strong>
+                                        </div>
+                                    </div>
+                                    <div class="zone-bar high-zone">
+                                        <div class="zone-info">
+                                            <span>Zone 3: Aerobic Capacity (Endurance)</span>
+                                            <strong id="hz3">150 - 168 bpm</strong>
+                                        </div>
+                                    </div>
+                                    <div class="zone-bar peak-zone">
+                                        <div class="zone-info">
+                                            <span>Zone 4: Anaerobic (Peak Threshold)</span>
+                                            <strong id="hz4">168 - 182 bpm</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript logic layers -->
+    <script src="planner.js"></script>
+    <script src="three-body.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

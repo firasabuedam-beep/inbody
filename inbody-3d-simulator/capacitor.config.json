@@ -1,0 +1,6 @@
+{
+  "appId": "com.aura3d.inbody",
+  "appName": "Aura3D",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

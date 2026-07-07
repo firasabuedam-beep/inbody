@@ -1,0 +1,1160 @@
+/* --- Custom variables for a premium neon dark theme --- */
+:root {
+    --bg-base: #0a0d14;
+    --bg-surface: #111622;
+    --bg-surface-glass: rgba(17, 22, 34, 0.7);
+    --border-color: rgba(255, 255, 255, 0.08);
+    
+    --color-primary: #00f2fe;
+    --color-primary-rgb: 0, 242, 254;
+    --color-secondary: #9b51e0;
+    --color-accent: #00ff88;
+    
+    --color-muscle: #00f2fe;
+    --color-fat: #ffb300;
+    --color-bone: #ffffff;
+    --color-danger: #ff3838;
+    
+    --text-main: #f0f3f8;
+    --text-muted: #8a99ad;
+    --text-bright: #ffffff;
+    
+    --shadow-main: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --transition-speed: 0.3s;
+    --font-stack: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--font-stack);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- App Container Grid --- */
+.app-container {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- Glassmorphic Panels --- */
+.glass-panel {
+    background: var(--bg-surface-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow-main);
+}
+
+/* --- Sidebar Styling --- */
+.sidebar {
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-icon {
+    font-size: 24px;
+    color: var(--color-primary);
+}
+
+.aura-glow {
+    text-shadow: 0 0 10px var(--color-primary);
+    filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6));
+}
+
+.logo-text h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-bright);
+}
+
+.logo-text h1 span {
+    color: var(--color-primary);
+}
+
+.logo-text p {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Upload InBody Section */
+.upload-section {
+    padding: 16px;
+}
+
+.upload-section h3, .form-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-bright);
+}
+
+.drop-zone {
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 24px 10px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.02);
+    transition: all var(--transition-speed);
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--color-primary);
+    background: rgba(0, 242, 254, 0.04);
+}
+
+.cloud-icon {
+    font-size: 32px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    transition: transform var(--transition-speed);
+}
+
+.drop-zone:hover .cloud-icon {
+    transform: translateY(-4px);
+    color: var(--color-primary);
+}
+
+.drop-text {
+    font-size: 13px;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.drop-text span {
+    color: var(--color-primary);
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+.file-limits {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+/* OCR Scanner Overlay */
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 13, 20, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+    z-index: 10;
+}
+
+.scanner-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.scanner-line {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(180deg, transparent, var(--color-primary), transparent);
+    box-shadow: 0 0 15px var(--color-primary);
+    top: 0;
+    animation: scan 2s linear infinite;
+}
+
+.scan-status-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.spinner {
+    color: var(--color-primary);
+    font-size: 16px;
+}
+
+@keyframes scan {
+    0% { top: 0%; }
+    50% { top: 100%; }
+    100% { top: 0%; }
+}
+
+/* Form Styling */
+.form-section {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-grow: 1;
+}
+
+.form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.form-group input, .form-group select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    padding: 8px 12px;
+    font-family: var(--font-stack);
+    font-size: 13px;
+    outline: none;
+    transition: all var(--transition-speed);
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 8px rgba(0, 242, 254, 0.2);
+}
+
+.range-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.range-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.range-val {
+    font-weight: 600;
+    color: var(--text-bright);
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text-bright);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+#bodyFat::-webkit-slider-thumb {
+    background: var(--color-fat);
+    box-shadow: 0 0 10px rgba(255, 179, 0, 0.6);
+}
+
+#muscleMass::-webkit-slider-thumb {
+    background: var(--color-muscle);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+}
+
+.range-group select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    padding: 8px 12px;
+    font-family: var(--font-stack);
+    font-size: 13px;
+    outline: none;
+}
+
+/* Quick Stats Metrics Dashboard */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.q-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.q-stat span {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.q-stat strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-top: 2px;
+}
+
+/* --- Main Panel Layout --- */
+.main-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+    overflow: hidden;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+    padding: 8px;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-tab {
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: var(--text-muted);
+    font-family: var(--font-stack);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--transition-speed);
+}
+
+.nav-tab:hover {
+    color: var(--text-bright);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-tab.active {
+    background: rgba(0, 242, 254, 0.1);
+    color: var(--color-primary);
+    font-weight: 600;
+    box-shadow: inset 0 0 8px rgba(0, 242, 254, 0.1);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+}
+
+/* Tab Content Areas */
+.tab-content-wrapper {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Tab 1: 3D Simulation Panel --- */
+.simulation-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    gap: 16px;
+}
+
+.canvas-container {
+    flex-grow: 1;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    background: radial-gradient(circle at center, #1b2234 0%, #0d111a 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Viewport Controls */
+.viewport-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    z-index: 5;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.control-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.control-section h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.btn-group {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2px;
+}
+
+.view-btn {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--text-muted);
+    font-family: var(--font-stack);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.view-btn:hover {
+    color: var(--text-bright);
+}
+
+.view-btn.active {
+    background: var(--bg-surface);
+    color: var(--color-primary);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+/* Switch toggle custom styling */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 18px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: .4s;
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--text-muted);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: rgba(0, 242, 254, 0.15);
+    border-color: var(--color-primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(14px);
+    background-color: var(--color-primary);
+}
+
+.reset-camera-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--text-main);
+    font-family: var(--font-stack);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-speed);
+}
+
+.reset-camera-btn:hover {
+    background: rgba(0, 242, 254, 0.1);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* Tape Measure HUD Display */
+.tape-measure-readout {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.readout-card {
+    background: rgba(10, 13, 20, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--color-primary);
+    border-radius: 8px;
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.readout-card:nth-child(2) {
+    border-left-color: var(--color-fat);
+}
+
+.readout-card:nth-child(3) {
+    border-left-color: var(--color-secondary);
+}
+
+.readout-card .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.readout-card .val {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-top: 2px;
+}
+
+.viewport-help {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(10, 13, 20, 0.7);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* --- Tab 2: Nutrition Section --- */
+.nutrition-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    height: 100%;
+    padding-right: 4px;
+}
+
+.nutrition-summary {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 24px;
+    padding: 24px;
+}
+
+.calorie-target {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.calorie-target .card-icon {
+    font-size: 36px;
+    color: #ff5252;
+    background: rgba(255, 82, 82, 0.1);
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(255, 82, 82, 0.2);
+}
+
+.calorie-target span {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.calorie-target h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-bright);
+    margin: 4px 0;
+}
+
+.calorie-target p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.macros-summary {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    border-left: 1px solid var(--border-color);
+    padding-left: 30px;
+}
+
+.macro-donut-wrapper {
+    position: relative;
+    width: 90px;
+    height: 90px;
+}
+
+.circular-chart {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 2.8;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.5s ease;
+}
+
+.circle-protein {
+    stroke: var(--color-primary);
+}
+
+.circle-carbs {
+    stroke: var(--color-accent);
+}
+
+.circle-fats {
+    stroke: var(--color-fat);
+}
+
+.donut-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.donut-text span {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-bright);
+    line-height: 1;
+}
+
+.donut-text .unit {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 1px;
+}
+
+.macro-legends {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.legend-item {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+}
+
+.legend-item strong {
+    color: var(--text-bright);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.p-dot { background-color: var(--color-primary); }
+.c-dot { background-color: var(--color-accent); }
+.f-dot { background-color: var(--color-fat); }
+
+.text-protein { color: #82e9ff; }
+.text-carbs { color: #82ffb6; }
+.text-fats { color: #ffe482; }
+
+/* Meals Grid */
+.meal-plan-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-bright);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.meals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.meal-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all var(--transition-speed);
+}
+
+.meal-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 242, 254, 0.2);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+}
+
+.meal-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.meal-card-header .tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+}
+
+.meal-card:nth-child(1) .tag { color: var(--color-primary); background: rgba(0, 242, 254, 0.08); }
+.meal-card:nth-child(2) .tag { color: var(--color-accent); background: rgba(0, 255, 136, 0.08); }
+.meal-card:nth-child(3) .tag { color: var(--color-secondary); background: rgba(155, 81, 224, 0.08); }
+.meal-card:nth-child(4) .tag { color: var(--color-fat); background: rgba(255, 179, 0, 0.08); }
+
+.meal-card-header .kcal {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-bright);
+}
+
+.meal-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-bright);
+}
+
+.meal-items {
+    font-size: 12px;
+    color: var(--text-muted);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meal-items li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.meal-items li::before {
+    content: "•";
+    color: var(--color-primary);
+}
+
+.meal-macros {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: rgba(0, 0, 0, 0.15);
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: auto;
+}
+
+/* --- Tab 3: Workout Layout --- */
+.workout-dashboard {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.workout-left-pane, .workout-right-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    height: 100%;
+    padding-right: 4px;
+}
+
+.split-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.split-info span {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.split-info h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin: 4px 0;
+}
+
+.split-info p {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.training-frequency-tag {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px 16px;
+    text-align: center;
+}
+
+.training-frequency-tag .tag-title {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.training-frequency-tag strong {
+    font-size: 18px;
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+/* Workout Cards */
+.workout-split-days {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.workout-day-card {
+    padding: 16px 20px;
+    transition: all var(--transition-speed);
+}
+
+.workout-day-card:hover {
+    border-color: rgba(155, 81, 224, 0.2);
+    transform: translateX(4px);
+}
+
+.day-card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.day-card-title-row h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-bright);
+}
+
+.day-card-title-row .tag {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(155, 81, 224, 0.1);
+    color: var(--color-secondary);
+}
+
+.workout-day-card.rest-day-card {
+    background: rgba(255, 255, 255, 0.01);
+    border-style: dashed;
+}
+
+.workout-day-card.rest-day-card .tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+}
+
+.exercise-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    font-size: 12px;
+}
+
+.exercise-item {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+}
+
+.exercise-item span {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* Cardio Cards */
+.cardio-recommendations {
+    padding: 20px;
+}
+
+.cardio-recommendations h3, .hr-zones-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-bright);
+}
+
+.cardio-metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.cardio-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.cardio-card span {
+    font-size: 9px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.cardio-card strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-bright);
+}
+
+.cardio-explanation {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+/* Heart Rate Zones */
+.hr-zones-section {
+    padding: 20px;
+}
+
+.zones-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.zone-bar {
+    position: relative;
+    border-radius: 8px;
+    padding: 10px 14px;
+    border-left: 4px solid var(--text-muted);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.zone-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    align-items: center;
+    z-index: 2;
+    position: relative;
+}
+
+.zone-info span {
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.zone-info strong {
+    color: var(--text-bright);
+    font-weight: 700;
+}
+
+/* Coloring zones */
+.low-zone { border-left-color: #00ff88; }
+.mid-zone { border-left-color: var(--color-fat); }
+.high-zone { border-left-color: var(--color-secondary); }
+.peak-zone { border-left-color: #ff3838; }
+
+.active-zone {
+    background: rgba(255, 179, 0, 0.06);
+    box-shadow: 0 0 10px rgba(255, 179, 0, 0.1);
+}
+
+.active-zone .zone-info span {
+    color: var(--color-fat);
+    font-weight: 600;
+}
